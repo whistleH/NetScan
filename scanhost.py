@@ -3,7 +3,56 @@ from scapy.all import *
 from random import randint
 from optparse import OptionParser
 from utils import *
+import threading
+import queue
+import time
+import concurrent.futures
 
+class HostScanner():
+    # 初始化参数
+    def __init__(self, ips, scan_func, **kwargs):
+        self._ips = ips
+        self._scan_func =  scan_func
+        self._scan_res = {}
+
+        if 'iface' in kwargs.keys():
+            self._iface = kwargs['iface']
+        else:
+            self._iface = ''
+        if 'src_mac' in kwargs.keys():
+            self._src_mac = kwargs['src_mac']
+        else:
+            self._src_mac = ''
+        if 'thread_limit' in kwargs.keys():
+            self._thread_limit = kwargs['thread_limit']
+        else:
+            self._thread_limit = 5
+    
+    def scanner(self,ip_index, ip, iface, src_mac):
+        if self._scan_func == arp_scan:
+            self._scan_res[ip_index] = (ip, self._scan_func(ip,iface,src_mac))
+        else:
+            self._scan_res[ip_index] = (ip, self._scan_func(ip))
+    
+    # 多线程运行
+    def sacnner_helper(self):
+        ip_index = 0
+        while ip_index < len(self._ips):
+            while threading.activeCount() <= self._thread_limit and ip_index < len(self._ips):
+                thread = threading.Thread(target=self.scanner,
+                                          args=(ip_index, self._ips[ip_index], self._iface, self._src_mac))
+                thread.start()
+                ip_index += 1
+
+            time.sleep(0.5)
+
+    # 多线程，线程池运行
+    def start(self):
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self._thread_limit) as executor:
+            args_set = [[ip_index, self._ips[ip_index], self._iface, self._src_mac] for ip_index in range(len(self._ips))]
+            scan_res = [executor.submit(lambda p: self.scanner(*p),args) for args in args_set]
+        return self._scan_res
+        
 
 # 构造ICMP包完成主机状态的检测
 # 输入：待检测的IP
@@ -14,17 +63,12 @@ def icmp_scan(ip):
     icmp_seq = randint(1, 65535)
 
     icmp_packet = IP(dst=ip,ttl=128,id=ip_id)/ICMP(id=icmp_id,seq=icmp_seq)/b'whistleH'
-
+    
     result = sr1(icmp_packet, timeout=2, verbose=False)
     if result:
-        for rcv in result:
-            scan_ip = rcv[IP].src
-            return True
-            #print(scan_ip + "--> Host is up")
+        return True
     else:
         return False
-        # print(ip + "--> Host is down")
-    return False
 
 
 # 构造ARP包完成主机的检测
@@ -39,11 +83,8 @@ def arp_scan(ip, iface, src_mac=''):
     # resp[0].res[0][1].fields['dst']
     if resp:
         return True
-        # print(ip + "--> Host is up")
     else:
         return False
-        # print(ip + "--> Host is down")
-    return False
 
 
 # 构造ACK包完成主机的检测
@@ -95,15 +136,8 @@ def udp_scan(ip):
        # print(ip + "--> Host is down") 
     return False
 
-# icmp_scan("192.168.80.140")
-# ack_scan("192.168.80.140")
-# syn_scan("192.168.80.140")
-# arp_scan("192.168.80.123",'VMware Network Adapter VMnet8')
 
-# ip = '192.168.80.140'
-# if udp_scan(ip):
-#     print(ip + "--> Host is up")
-# else:
-#     print(ip + "--> Host is down") 
-
-
+ips = ["192.168.80.1", "192.168.80.140", "192.168.70.123"]
+hostscannner = HostScanner(ips,icmp_scan,thread_limit=5)
+res = hostscannner.start()
+print(res)
