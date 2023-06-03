@@ -2,6 +2,7 @@ from utils import *
 import time
 import concurrent.futures
 from scanservice import get_banner
+from config import PORT_STATUS
 
 class PortScanner():
     def __init__(self, ip, ports, scan_func, **kwargs):
@@ -18,7 +19,7 @@ class PortScanner():
   
     def scanner(self, port_index, port, ip):
         status = self._scan_func(ip, port) 
-        if status in [port_status[1],port_status[2],port_status[3]]: 
+        if status in [PORT_STATUS[1],PORT_STATUS[2],PORT_STATUS[3]]: 
             self._scan_res[port_index] = (port, status, get_banner(ip, port))
         else:
             self._scan_res[port_index] = (port, status, "")
@@ -36,26 +37,26 @@ def ack_scan(ip, dport):
     resp = sr1(ack_packet, timeout=1, verbose=False)
 
     if resp is None:
-        port_s = port_status[2]
+        port_s = PORT_STATUS[2]
     elif resp:
         if resp.haslayer("ICMP") and resp["ICMP"].type==3:
-            port_s = port_status[2]
+            port_s = PORT_STATUS[2]
         if resp["TCP"].flags == 'R':
-            port_s= port_status[3]    
+            port_s= PORT_STATUS[3]    
     return port_s  
 
-# syn 扫描
+# SYN 扫描
 def syn_scan(ip, dport):
     syn_packet = IP(dst=ip)/TCP(flags="S",dport = dport)
     resp = sr1(syn_packet, timeout=1, verbose=False)
 
     if resp:
         if resp["TCP"].flags == "SA":
-            port_s = port_status[1]
+            port_s = PORT_STATUS[1]
         elif resp["TCP"].flags == "RA" or resp["TCP"].flags == "R": 
-            port_s = port_status[0]
+            port_s = PORT_STATUS[0]
     else:
-        port_s = port_status[0]
+        port_s = PORT_STATUS[0]
     return port_s
 
 # FIN 扫描
@@ -64,10 +65,10 @@ def fin_scan(ip, dport):
     resp = sr1(fin_packet, timeout=2, verbose = False)
     print(dport, resp)
     if resp is None:
-        port_s = port_status[1] + "|" + port_status[2]
+        port_s = PORT_STATUS[1] + "|" + PORT_STATUS[2]
     else:
         if resp["TCP"].flags == "RA":
-            port_s = port_status[0]
+            port_s = PORT_STATUS[0]
     return port_s
 
 # Xmas 扫描
@@ -76,10 +77,10 @@ def xmas_scan(ip ,dport):
     resp = sr1(xmas_packet, timeout=2, verbose = False)
     # print(resp)
     if resp is None:
-        port_s = port_status[1] + "|" + port_status[2]
+        port_s = PORT_STATUS[1] + "|" + PORT_STATUS[2]
     else:
         if resp["TCP"].flags == "RA":
-            port_s = port_status[0]
+            port_s = PORT_STATUS[0]
     return port_s
 
 # NULL 扫描
@@ -89,10 +90,10 @@ def null_scan(ip ,dport):
     resp = sr1(null_packet, timeout=2, verbose = False)
     # print(resp)
     if resp is None:
-        port_s= port_status[1] + "|" + port_status[2]
+        port_s= PORT_STATUS[1] + "|" + PORT_STATUS[2]
     else:
         if resp["TCP"].flags == "RA":
-            port_s = port_status[0]
+            port_s = PORT_STATUS[0]
     return port_s
 
 

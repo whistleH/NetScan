@@ -63,7 +63,7 @@ def icmp_scan(ip):
     icmp_id = randint(1, 65535)
     icmp_seq = randint(1, 65535)
 
-    icmp_packet = IP(dst=ip,ttl=128,id=ip_id)/ICMP(id=icmp_id,seq=icmp_seq)/b'whistleH'
+    icmp_packet = IP(dst=ip,ttl=128,id=ip_id)/ICMP(id=icmp_id,seq=icmp_seq)/b'test_data'
     
     result = sr1(icmp_packet, timeout=2, verbose=False)
     if result:
@@ -113,7 +113,7 @@ def syn_scan(ip):
 
     if resp:
         print(resp[TCP].flags)
-        if resp[TCP].flags in ["RA", "R", "SA"]:
+        if resp[TCP].flags in ["RA", "SA"]:
             return True
             # print(ip + "--> Host is up")
     else:
@@ -124,6 +124,7 @@ def syn_scan(ip):
 
 # 构造UDP包完成主机的检测
 def udp_scan(ip):
+    # todo, 剔除常见端口
     dport = random.randint(1, 65535)
     udp_packet = IP(dst=ip)/UDP(dport = dport)
     resp = sr1(udp_packet, timeout=1, verbose=False)
