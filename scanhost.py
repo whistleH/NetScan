@@ -51,6 +51,7 @@ class HostScanner():
         with concurrent.futures.ThreadPoolExecutor(max_workers=self._thread_limit) as executor:
             args_set = [[ip_index, self._ips[ip_index], self._iface, self._src_mac] for ip_index in range(len(self._ips))]
             scan_res = [executor.submit(lambda p: self.scanner(*p),args) for args in args_set]
+            [f.result() for f in scan_res]
         return self._scan_res
         
 
@@ -137,7 +138,8 @@ def udp_scan(ip):
     return False
 
 
-ips = ["192.168.80.1", "192.168.80.140", "192.168.70.123"]
-hostscannner = HostScanner(ips,icmp_scan,thread_limit=5)
-res = hostscannner.start()
-print(res)
+# demo
+# ips = ["192.168.80.1", "192.168.80.140", "192.168.70.123", "192.168.80.134", "127.0.0.1", "100.80.59.237"]
+# hostscannner = HostScanner(ips,icmp_scan,thread_limit=5)
+# res = hostscannner.start()
+# print(res)
