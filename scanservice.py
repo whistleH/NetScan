@@ -64,5 +64,5 @@ def get_banner(ip, port):
             break
         sock.close()
 
-# print(get_banner("127.0.0.1","3306"))
+print(get_banner("127.0.0.1","3306"))
 

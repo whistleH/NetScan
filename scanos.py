@@ -20,4 +20,4 @@ def ttl_scan(ip):
     else:
         print("No ping!")
 
-ttl_scan("192.168.80.140")
+ttl_scan("192.168.142.12")
