@@ -1,34 +1,15 @@
+#coding:utf-8
 from scapy.all import *
 from utils import *
 import json
 import socket
 import re
-
-signs = {
-    "origin" : [b'FTP|FTP|^220.*FTP',
-                b'MySQL|MySQL|mysql_native_password',
-                b'oracle-https|^220 -ora',
-                b'Telnet|Telnet|Telnet',
-                b'Telnet|Telnet|^\r\n%connection closed by remote host!\x00$',
-                b'VNC|VNC|^RFB',
-                b'IMAP|IMAP|^\* OK.*?MAP',
-                b'POP|POP|^\+OK.*?',
-                b'SMTP|SMTP|^220.*?SMTP',
-                b'Kangle|Kangle|HTTP .*kangle',
-                b'SMTP|SMTP|^554 SMTP',
-                b'SSH|SSH|^SSH-',
-                b'HTTPS|HTTPS|Location: https',
-                b'HTTP|HTTP|HTTP/1.1',
-                b'HTTP|HTTP|HTTP/1.0',
-                ],
-    "personal" : []
-}
-
+from config import SER_SIGNS
 
 def banner_match(resp):
     if re.search(b'<title>502 Bad Gateway', resp):
         proto = "service uncessed!"
-    for pattern in signs["origin"]:
+    for pattern in SER_SIGNS:
         pattern = pattern.split(b'|')
         if re.search(pattern[-1], resp, re.IGNORECASE):
             proto = pattern[1].decode()
@@ -36,6 +17,7 @@ def banner_match(resp):
         else:
             proto = "Unrecognized"
     return proto
+
 
 def get_banner(ip, port):
     while True:
