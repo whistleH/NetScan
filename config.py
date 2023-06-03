@@ -1,6 +1,9 @@
 #coding:utf-8
 
 
+DIR_DB = 'db'
+DIR_LOG = 'log'
+
 PORT_STATUS = {
     0 : "Close",
     1 : "Open",

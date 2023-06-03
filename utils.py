@@ -46,5 +46,13 @@ def get_os_from_tcp(win_size,mss):
     os_set = get_os_from_winsize(win_size) & get_os_from_mss(mss)
     return os_set
 
+def get_user_agent():
+    options = []
+    with open('db/user-agents.txt','r') as fin:
+        lines = fin.readlines()
+        for i in lines:
+            options.append(i.strip())
+    return options
+
 
 

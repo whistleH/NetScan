@@ -45,7 +45,7 @@ def ack_scan(ip, dport):
             port_s= PORT_STATUS[3]    
     return port_s  
 
-# syn 扫描
+# SYN 扫描
 def syn_scan(ip, dport):
     syn_packet = IP(dst=ip)/TCP(flags="S",dport = dport)
     resp = sr1(syn_packet, timeout=1, verbose=False)
