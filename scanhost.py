@@ -143,3 +143,5 @@ def udp_scan(ip):
 # hostscannner = HostScanner(ips,icmp_scan,thread_limit=5)
 # res = hostscannner.start()
 # print(res)
+
+# 输出格式：{ip: T/F}

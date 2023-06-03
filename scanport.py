@@ -1,6 +1,7 @@
 from utils import *
 import time
 import concurrent.futures
+from scanservice import get_banner
 
 class PortScanner():
     def __init__(self, ip, ports, scan_func, **kwargs):
@@ -16,7 +17,11 @@ class PortScanner():
         
   
     def scanner(self, port_index, port, ip):
-        self._scan_res[port_index] = (port, self._scan_func(ip, port))
+        status = self._scan_func(ip, port) 
+        if status in [port_status[1],port_status[2],port_status[3]]: 
+            self._scan_res[port_index] = (port, status, get_banner(ip, port))
+        else:
+            self._scan_res[port_index] = (port, status, "")
 
     def start(self):
         with concurrent.futures.ThreadPoolExecutor(max_workers=self._thread_limit) as executor:
@@ -93,9 +98,9 @@ def null_scan(ip ,dport):
 
 # ip = "192.168.80.140"
 # ports = [22, 80, 443, 1234, 3389]
-# # print(xmas_scan(ip, ports))
-# portscanner = PortScanner(ip, ports, xmas_scan, thread_limit=1)
+# portscanner = PortScanner(ip, ports, syn_scan, thread_limit=1)
 # res = portscanner.start()
 # print(res)
 
-
+# 输出格式：index:(port, status, service)
+# {0: (22, 'Open', 'SSH'), 1: (80, 'Open', 'HTTP'), 2: (443, 'Close', ''), 3: (1234, 'Close', ''), 4: (3389, 'Close', '')}

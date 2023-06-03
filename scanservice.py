@@ -26,7 +26,6 @@ signs = {
 
 
 def banner_match(resp):
-    text = ""
     if re.search(b'<title>502 Bad Gateway', resp):
         proto = "service uncessed!"
     for pattern in signs["origin"]:
@@ -54,7 +53,7 @@ def get_banner(ip, port):
                     # print(resp)
                     return banner_match(resp)
             except(ConnectionResetError, socket.timeout):
-                print("reset")
+                # print("reset")
                 reset_time += 1
                 if reset_time > 10:
                     return "Please wait for a little time to reset"
@@ -65,5 +64,5 @@ def get_banner(ip, port):
             break
         sock.close()
 
-print(get_banner("127.0.0.1","3306"))
+# print(get_banner("127.0.0.1","3306"))
 
