@@ -1,3 +1,4 @@
+#coding:utf-8
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QTextEdit, QMessageBox
 
 from ui.staticValue import font_16B, font_14, font_margin

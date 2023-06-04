@@ -1,3 +1,4 @@
+#coding:utf-8
 from utils import *
 import concurrent.futures
 from urllib.parse import urljoin

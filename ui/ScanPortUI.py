@@ -1,3 +1,4 @@
+#coding:utf-8
 from PyQt5.QtWidgets import QComboBox, QTableWidgetItem, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QLabel, QTableWidget, QInputDialog, QPushButton, QTextEdit, QMessageBox
 from PyQt5.QtCore import Qt
 
