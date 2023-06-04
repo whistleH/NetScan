@@ -96,11 +96,23 @@ def null_scan(ip ,dport):
     return port_s
 
 
-ip = "192.168.80.1"
-ports = [80,22,3389,443,3306]
-portscanner = PortScanner(ip, ports, syn_scan, thread_limit=1)
-res = portscanner.start()
-print(res)
+def get_scan_func(func_name):
+    if func_name == "ACK":
+        return ack_scan
+    elif func_name == "SYN":
+        return syn_scan
+    elif func_name == "FIN":
+        return fin_scan
+    elif func_name == "XMAS":
+        return xmas_scan
+    else:
+        return null_scan
+
+# ip = "192.168.80.1"
+# ports = [80,22,3389,443,3306]
+# portscanner = PortScanner(ip, ports, syn_scan, thread_limit=1)
+# res = portscanner.start()
+# print(res)
 
 # 输出格式：index:(port, status, service)
 # {0: (22, 'Open', 'SSH'), 1: (80, 'Open', 'HTTP'), 2: (443, 'Close', ''), 3: (1234, 'Close', ''), 4: (3389, 'Close', '')}

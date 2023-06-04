@@ -139,6 +139,21 @@ def udp_scan(ip):
     return False
 
 
+def get_scan_func(func_name):
+    if func_name == "ACK":
+        return ack_scan
+    elif func_name == "ICMP":
+        return icmp_scan
+    elif func_name == "ARP":
+        return arp_scan
+    elif func_name == "SYN":
+        return syn_scan
+    elif func_name == "UDP":
+        return udp_scan
+    else:
+        return None
+
+
 # demo
 # ips = ["192.168.80.1", "192.168.80.140", "192.168.70.123", "192.168.80.134", "127.0.0.1", "100.80.59.237"]
 # hostscannner = HostScanner(ips,icmp_scan,thread_limit=5)

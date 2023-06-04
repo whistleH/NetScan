@@ -4,6 +4,7 @@ import psutil
 from config import OS_DB,OS_SIGNS
 
 
+
 def get_iface_name():
     if_list = psutil.net_if_addrs()
     return [x for x in if_list.keys()]

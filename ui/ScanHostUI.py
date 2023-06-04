@@ -174,7 +174,7 @@ class ScanHostTab(QWidget):
     def delete_ip(self):
         del_win = ScanInputDialog('删除IP', '请输入要删除的IP:')
         if del_win.exec():
-            ip  = del_win.textValue();
+            ip  = del_win.textValue()
             if ip:
                 current_text = self.text_edit_ips.toPlainText()
                 if ip in current_text.split('\n'):

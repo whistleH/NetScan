@@ -26,15 +26,18 @@ class DirScanner():
   
     def scanner(self, url):
         try:
-            # print(url)
+            print(url)
             r = requests.get(
                 url = url,
                 headers={
                     'User-Agent':self._user_agent
-                }
+                },
+                timeout=2,
             )
             self._fd.write(str(r.status_code) + "," + url)
             # self._scan_res[url] = r.status_code
+        except TimeoutError:
+            self._fd.write(str(408) + "," + url)
         except:
             pass
 
@@ -42,7 +45,7 @@ class DirScanner():
         path = []
         with open(DIR_DB + "/dicc.txt","r") as fin:
             path = fin.readlines()
-        
+        print("open the password")
         with concurrent.futures.ThreadPoolExecutor(max_workers=self._thread_limit) as executor:
             scan_res = [executor.submit(self.scanner, urljoin(self._url, router)) for router in path]
             [f.result() for f in scan_res] 
@@ -51,6 +54,3 @@ class DirScanner():
 
     def __del__(self):
         self._fd.close()
-
-dirscanner = DirScanner("http://127.0.0.1:80")
-res = dirscanner.start()
