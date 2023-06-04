@@ -1,3 +1,4 @@
+#coding:utf-8
 from utils import *
 import re
 from scapy.all import *

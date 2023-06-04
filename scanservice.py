@@ -20,25 +20,31 @@ def banner_match(resp):
 
 
 def get_banner(ip, port):
+    reset_time = 0
     while True:
-        reset_time = 0
         resp = ''
         PROBE = 'GET / HTTP/1.0\r\n\r\n'
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(10)
+        sock.settimeout(2)
         result = sock.connect_ex((ip, int(port)))
         if result == 0:
             try:
                 sock.sendall(PROBE.encode())
                 resp = sock.recv(256)
                 if resp:
-                    # print(resp)
+                    sock.close()
                     return banner_match(resp)
+                else:
+                    reset_time += 1
+                    if reset_time > 5:
+                        sock.close()
+                        return "Unrecognized/Reset" 
             except(ConnectionResetError, socket.timeout):
-                # print("reset")
+                print("reset")
                 reset_time += 1
-                if reset_time > 10:
-                    return "Please wait for a little time to reset"
+                if reset_time > 5:
+                    sock.close()
+                    return "Net fail/Reset"
                 pass
         else:
             # 当端口无法关闭/禁止连接会触发这个分支

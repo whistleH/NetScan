@@ -84,7 +84,7 @@ class ScanDirTab(QWidget):
 
         # 打印所有的 URL
         if len(urls) == 1:    
-            dirscanner = DirScanner("http://192.168.142.111:80", thread_limit=1)
+            dirscanner = DirScanner(urls[0], thread_limit=5)
             result = dirscanner.start()
 
             

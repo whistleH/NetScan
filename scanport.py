@@ -1,3 +1,4 @@
+#coding:utf-8
 from utils import *
 import time
 import concurrent.futures
@@ -49,7 +50,6 @@ def ack_scan(ip, dport):
 def syn_scan(ip, dport):
     syn_packet = IP(dst=ip)/TCP(flags="S",dport = dport)
     resp = sr1(syn_packet, timeout=1, verbose=False)
-
     if resp:
         if resp["TCP"].flags == "SA":
             port_s = PORT_STATUS[1]
@@ -108,6 +108,7 @@ def get_scan_func(func_name):
         return xmas_scan
     else:
         return null_scan
+
     
 if __name__ == "__main__":
     ip = "192.168.142.12"
@@ -115,6 +116,7 @@ if __name__ == "__main__":
     portscanner = PortScanner(ip, ports, syn_scan, thread_limit=1)
     res = portscanner.start()
     print(res)
+
 
 # 输出格式：index:(port, status, service)
 # {0: (22, 'Open', 'SSH'), 1: (80, 'Open', 'HTTP'), 2: (443, 'Close', ''), 3: (1234, 'Close', ''), 4: (3389, 'Close', '')}
