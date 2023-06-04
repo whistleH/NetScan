@@ -75,22 +75,44 @@ class ScanOsTab(QWidget):
         # 空行
         self.h_layout3 = QHBoxLayout() 
         self.label_blank_3 = QLabel('    ')
-        self.label_blank_3.setFont(font_margin)
+        self.label_blank_3.setFont(font_16B)
         self.h_layout3.addWidget(self.label_blank_3)
         self.layout.addLayout(self.h_layout3)
         
         # 下方日志输出
-        self.textEdit = QTextEdit()
-        self.textEdit.setReadOnly(True)
-        self.textEdit.setFont(font_14)
-        self.textEdit.setStyleSheet("background-color: black; color: white;")
-        self.layout.addWidget(self.textEdit, 5)
+        self.label_result = QLabel("扫描结果: ")
+        self.label_result.setFont(font_16B)
+        self.layout.addWidget(self.label_result)
+        
+        self.line_protocol =  QHBoxLayout() 
+        self.label_protocal = QLabel("扫描协议: ")
+        self.label_protocal.setFont(font_16B)
+        self.result_protocal = QLineEdit()
+        self.result_protocal.setReadOnly(True)
+        self.result_protocal.setFont(font_16B)
+        self.line_protocol.addWidget(self.label_protocal)
+        self.line_protocol.addWidget(self.result_protocal)
+        self.layout.addLayout(self.line_protocol)
+        
+        self.line_system =  QHBoxLayout()
+        self.label_system = QLabel("操作系统: ")
+        self.label_system.setFont(font_16B)
+        self.result_system = QLineEdit()
+        self.result_system.setReadOnly(True)
+        self.result_system.setFont(font_16B)
+        self.line_system.addWidget(self.label_system)
+        self.line_system.addWidget(self.result_system)
+        self.layout.addLayout(self.line_system)
+        
+        self.layout.addStretch()
+        
     
     # 清理输出
     def on_button_clear(self):
         self.lineEdit_port.clear()
         self.lineEdit_ip.clear()
-        self.textEdit.clear()
+        self.result_protocal.clear()
+        self.result_system.clear()
 
     # 运行扫描
     def on_button_start(self):
@@ -102,14 +124,18 @@ class ScanOsTab(QWidget):
             QMessageBox.critical(self, "错误", "未输入端口号或者端口错误")
         else:
             # 重制输出
+            self.result_protocal.clear()
+            self.result_system.clear()
+            
             if self.scan_option.currentText() == "TCP":
                 resp = tcp_para_scan(ip, int(port))
             else:
                 resp = icmp_para_scan(ip)
+            key, value = list(resp.items())[0]
             
-            output = f"协议为: {resp.keys()}\n 返回内容为: {resp.values()}"
-            self.textEdit.setText(output)
-            
+            # output = f"协议为: {key}\n 返回内容为: {value}"
+            self.result_protocal.setText(key)
+            self.result_system.setText(value)
      
     def on_update_option(self):
         if self.scan_option.currentText() == "TCP":
