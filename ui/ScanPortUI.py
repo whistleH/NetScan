@@ -204,6 +204,8 @@ class ScanPortTab(QWidget):
         self.lineEdit_result.clear()
         self.lineEdit_ip.clear()
         self.tableWidget.clear()
+        self.tableWidget.setRowCount(0)
+
         self.tableWidget.setHorizontalHeaderLabels(["标号", "端口号", "状态", "服务名"])
         self.tableWidget.verticalHeader().setVisible(False)  # 隐藏行号
 
@@ -217,6 +219,7 @@ class ScanPortTab(QWidget):
         else:
             # 重制输出
             self.tableWidget.clear()
+            self.tableWidget.setRowCount(0)
             self.tableWidget.setHorizontalHeaderLabels(["标号", "端口号", "状态", "服务名"])
             self.tableWidget.verticalHeader().setVisible(False)  # 隐藏行号
         
