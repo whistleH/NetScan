@@ -49,7 +49,6 @@ def ack_scan(ip, dport):
 def syn_scan(ip, dport):
     syn_packet = IP(dst=ip)/TCP(flags="S",dport = dport)
     resp = sr1(syn_packet, timeout=1, verbose=False)
-
     if resp:
         if resp["TCP"].flags == "SA":
             port_s = PORT_STATUS[1]
@@ -97,11 +96,11 @@ def null_scan(ip ,dport):
     return port_s
 
 
-# ip = "192.168.80.140"
-# ports = [22, 80, 443, 1234, 3389]
-# portscanner = PortScanner(ip, ports, syn_scan, thread_limit=1)
-# res = portscanner.start()
-# print(res)
+ip = "192.168.80.1"
+ports = [80,22,3389,443,3306]
+portscanner = PortScanner(ip, ports, syn_scan, thread_limit=1)
+res = portscanner.start()
+print(res)
 
 # 输出格式：index:(port, status, service)
 # {0: (22, 'Open', 'SSH'), 1: (80, 'Open', 'HTTP'), 2: (443, 'Close', ''), 3: (1234, 'Close', ''), 4: (3389, 'Close', '')}
