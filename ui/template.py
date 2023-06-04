@@ -1,4 +1,3 @@
-#coding:utf-8
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QCheckBox, QPushButton, QTextEdit
 from PyQt5.QtGui import QFont
 

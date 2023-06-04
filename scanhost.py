@@ -153,11 +153,11 @@ def get_scan_func(func_name):
     else:
         return None
 
-
 # demo
-# ips = ["192.168.80.1", "192.168.80.140", "192.168.70.123", "192.168.80.134", "127.0.0.1", "100.80.59.237"]
-# hostscannner = HostScanner(ips,icmp_scan,thread_limit=5)
-# res = hostscannner.start()
-# print(res)
+if __name__ == "__main__":
+    ips = ["127.0.0.1"]
+    hostscannner = HostScanner(ips,icmp_scan,thread_limit=5)
+    res = hostscannner.start()
+    print(res)
 
 # 输出格式：{ip: T/F}

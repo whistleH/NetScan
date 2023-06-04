@@ -1,4 +1,3 @@
-#coding:utf-8
 from PyQt5.QtWidgets import QDialog, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QInputDialog, QPushButton, QTextEdit, QMessageBox
 from ui.staticValue import font_14, font_16B, font_margin
 

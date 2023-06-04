@@ -1,4 +1,3 @@
-#coding:utf-8
 from PyQt5.QtWidgets import QComboBox, QTableWidgetItem, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QLabel, QTableWidget, QInputDialog, QPushButton, QTextEdit, QMessageBox
 from ui.staticValue import font_14, font_16B, font_margin
 
@@ -91,6 +90,8 @@ class ScanDirTab(QWidget):
             
             output = f"目录为: {result}"
             self.textEdit.setText(output)
+        else:
+            QMessageBox.critical(self, "错误", "URL格式错误")
 
         
             
