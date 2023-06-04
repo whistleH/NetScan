@@ -90,6 +90,8 @@ class ScanDirTab(QWidget):
             
             output = f"目录为: {result}"
             self.textEdit.setText(output)
+        else:
+            QMessageBox.critical(self, "错误", "URL格式错误")
 
         
             

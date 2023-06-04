@@ -4,17 +4,15 @@ import sys
 
 from ui.ScanHostUI import ScanHostTab
 from ui.ScanPortUI import ScanPortTab
-from ui.ScanServiceUI import ScanServiceTab
 from ui.ScanOsUI import ScanOsTab
 from ui.ScanDirUI import ScanDirTab
-from ui.template import TemplateTab
 # from ui.ScanHostUI import ScanTab
 
 class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle('My First PyQt5 App')
+        self.setWindowTitle('仿NMAP扫描工具')
         self.setGeometry(100, 100, 1400, 1000)
  
         self.tab_widget = QTabWidget() 
@@ -27,8 +25,8 @@ class MyWindow(QMainWindow):
         self.tab2 = ScanPortTab()
         self.tab_widget.addTab(self.tab2, '端口扫描') 
         
-        self.tab3 = ScanServiceTab()
-        self.tab_widget.addTab(self.tab3, '服务扫描')
+        # self.tab3 = ScanServiceTab()
+        # self.tab_widget.addTab(self.tab3, '服务扫描')
         
         self.tab4 = ScanOsTab()
         self.tab_widget.addTab(self.tab4, '系统扫描')
