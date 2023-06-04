@@ -34,6 +34,6 @@ def tcp_para_scan(ip, dport):
     else:
         return {"TCP":"主机端口无法进行TCP探测"}
     
-# print(tcp_para_scan("192.168.80.140",80))
+# print(tcp_para_scan("192.168.142.111",80))
 
 

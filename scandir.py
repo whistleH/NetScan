@@ -52,5 +52,5 @@ class DirScanner():
     def __del__(self):
         self._fd.close()
 
-dirscanner = DirScanner("http://127.0.0.1:80")
-res = dirscanner.start()
+# dirscanner = DirScanner("http://192.168.142.111:80", thread_limit=1)
+# res = dirscanner.start()

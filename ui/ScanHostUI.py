@@ -3,6 +3,44 @@ from ui.staticValue import font_14, font_16B, font_margin
 
 import re
 
+import ipaddress
+
+from scanhost import *
+
+def parse_ips(ip_string):
+    # Initialize an empty list to store valid IP addresses
+    ip_list = []
+
+    # Split the input string by '-'
+    ip_parts = ip_string.split('-')
+
+    # If the input string contains '-', it means it's a range
+    if len(ip_parts) == 2:
+        # Parse the start and end of the range
+        start_ip = ip_parts[0]
+        end_ip_parts = start_ip.split('.')[:-1] + ip_parts[1].split('.')
+        end_ip = '.'.join(end_ip_parts)
+
+        try:
+            # Generate all IP addresses in the range and add them to ip_list
+            start_ip_int = int(ipaddress.IPv4Address(start_ip))
+            end_ip_int = int(ipaddress.IPv4Address(end_ip))
+            if start_ip_int <= end_ip_int:
+                ip_list += [str(ipaddress.IPv4Address(ip)) for ip in range(start_ip_int, end_ip_int + 1)]
+        except ipaddress.AddressValueError:
+            pass
+
+    # If the input string doesn't contain '-', it means it's a single IP address
+    elif len(ip_parts) == 1:
+        try:
+            ip_list.append(str(ipaddress.IPv4Address(ip_string)))
+        except ipaddress.AddressValueError:
+            pass
+
+    return ip_list
+
+
+
 class ScanInputDialog(QDialog):
     def __init__(self, title, desp ,parent=None):
         super(ScanInputDialog, self).__init__(parent)
@@ -83,6 +121,7 @@ class ScanHostTab(QWidget):
         self.scan_option.setFont(font_16B)
         self.scan_option.addItem('ICMP')
         self.scan_option.addItem('ACK')
+        self.scan_option.addItem('ARP')
         self.scan_option.addItem('SYN')
         self.scan_option.addItem('UDP')
         self.h_layout_select.addWidget(self.scan_option)   # 添加下拉栏
@@ -125,7 +164,7 @@ class ScanHostTab(QWidget):
             if ip in self.ips_inner.keys():
                 QMessageBox.warning(self, "添加失败", "重复的ip地址")
             else:   
-                ip_list = self.parse_ips(ip)
+                ip_list = parse_ips(ip)
                 if len(ip_list) == 0:
                     QMessageBox.warning(self, "添加失败", "错误的ip地址格式")
                 else:
@@ -148,39 +187,22 @@ class ScanHostTab(QWidget):
                     QMessageBox.warning(self, '删除失败', 'IP不存在')
 
     def start_scan(self):
+        self.text_edit_scan_result.clear()
         selected_option = self.scan_option.currentText()
+        select_func = get_scan_func(selected_option)
+        ip_list = [value for sublist in self.ips_inner.values() for value in sublist] 
+        
+        hostscannner = HostScanner(ip_list,select_func,thread_limit=1)
+        res = hostscannner.start()
+        for r in res.values():
+            status = "up" if r[1] else "down"
+            self.text_edit_scan_result.append(f'{r[0]} -> {status}')
         # Here you start your actual scanning operation
         # And append results to self.text_edit_scan_result
-        self.text_edit_scan_result.append(f'开始 {selected_option} 扫描...')
+        
         
     def clear_ip(self):
         self.text_edit_ips.clear()
         self.ips_inner = {}
         self.text_edit_scan_result.clear()
-        pass
     
-    def parse_ips(self, ip_string):
-        def is_valid_ip(ip):
-            parts = list(map(int, ip.split(".")))
-            return len(parts) == 4 and all(0 <= part < 256 for part in parts)
-        
-        def generate_ips(start, end):
-            start, end = int(start), int(end)
-            if start > end or start < 0 or end > 255:
-                return []
-            return [f"192.168.1.{i}" for i in range(start, end+1)]
-        
-        ips = []
-        matches = re.fullmatch(r"192\.168\.1\.(\d+(-\d+)?)", ip_string)
-        
-        if matches is not None:
-            match = matches.group(1)
-            if '-' in match:
-                start, end = match.split('-')
-                ips.extend(generate_ips(start, end))
-            else:
-                ip = f"192.168.1.{match}"
-                if is_valid_ip(ip):
-                    ips.append(ip)
-                    
-        return ips

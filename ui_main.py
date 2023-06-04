@@ -3,6 +3,10 @@ from PyQt5.QtGui import QFont
 import sys
 
 from ui.ScanHostUI import ScanHostTab
+from ui.ScanPortUI import ScanPortTab
+from ui.ScanServiceUI import ScanServiceTab
+from ui.ScanOsUI import ScanOsTab
+from ui.ScanDirUI import ScanDirTab
 from ui.template import TemplateTab
 # from ui.ScanHostUI import ScanTab
 
@@ -12,7 +16,7 @@ class MyWindow(QMainWindow):
 
         self.setWindowTitle('My First PyQt5 App')
         self.setGeometry(100, 100, 1400, 1000)
-
+ 
         self.tab_widget = QTabWidget() 
         self.setCentralWidget(self.tab_widget)
 
@@ -20,21 +24,28 @@ class MyWindow(QMainWindow):
         self.tab_widget.addTab(self.tab1, '主机扫描')
 
         # Other tabs ...
-        self.tab2 = QWidget()
-        self.tab_widget.addTab(self.tab2, 'Tab2')
+        self.tab2 = ScanPortTab()
+        self.tab_widget.addTab(self.tab2, '端口扫描') 
         
-        self.tab3 = QWidget()
-        self.tab_widget.addTab(self.tab3, 'Tab3')
+        self.tab3 = ScanServiceTab()
+        self.tab_widget.addTab(self.tab3, '服务扫描')
         
-        self.tab4 = QWidget()
-        self.tab_widget.addTab(self.tab4, 'Tab4')
+        self.tab4 = ScanOsTab()
+        self.tab_widget.addTab(self.tab4, '系统扫描')
         
-        self.tab5 = TemplateTab()
-        self.tab_widget.addTab(self.tab5, 'Tab5')
+        self.tab5 = ScanDirTab()
+        self.tab_widget.addTab(self.tab5, '目录扫描')
 
 
 def main():
     app = QApplication(sys.argv)
+    app.setStyleSheet("""
+        QTabBar::tab {
+            font-size: 12pt;
+            width: 200px;
+            height: 50px
+        }
+        """)
     
     win = MyWindow()
     win.show()
