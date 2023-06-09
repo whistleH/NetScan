@@ -22,7 +22,7 @@ class DirScanner():
         else:
             self._user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:58.0) Gecko/20100101 Firefox/58.0'
 
-        self._log = DIR_LOG + "/" + base64.b64encode((url + "-" + str(datetime.now())).encode()).decode()
+        self._log = DIR_LOG + "/" + base64.b64encode((url + "-" + str(datetime.now())).encode() + ".log").decode()
         self._fd = open(self._log,"w")
   
     def scanner(self, url):
