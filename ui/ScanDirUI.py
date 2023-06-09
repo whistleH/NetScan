@@ -38,6 +38,7 @@ class ScanDirTab(QWidget):
         super().__init__()
 
         self.res_data = []
+        self.thread_n = 1
         
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
@@ -78,9 +79,17 @@ class ScanDirTab(QWidget):
         self.layout.addLayout(self.h_layout1)
         
         # 边距
-        self.marginLabel = QLabel("   ")
-        self.marginLabel.setFont(font_margin)
-        self.layout.addWidget(self.marginLabel)
+        # self.marginLabel = QLabel("   ")
+        # self.marginLabel.setFont(font_margin)
+        # self.layout.addWidget(self.marginLabel)
+        
+        self.h_layout_setting = QHBoxLayout()
+        self.h_layout_setting.addStretch()
+        self.setting_button = QPushButton('线程设置')
+        self.setting_button.setFont(font_16B)
+        self.setting_button.clicked.connect(self.on_setting)
+        self.h_layout_setting.addWidget(self.setting_button)
+        self.layout.addLayout(self.h_layout_setting)
         
         # 过滤器
         self.filter_label = QLabel("Filter: ")
@@ -150,10 +159,11 @@ class ScanDirTab(QWidget):
 
         # 打印所有的 URL
         if len(urls) == 1:    
-            dirscanner = DirScanner(urls[0], thread_limit=5)
-            # result = dirscanner.start()
+            dirscanner = DirScanner(urls[0], thread_limit=self.thread_n)
+            result = dirscanner.start()
 
-            log_path = 'log/aHR0cDovLzEyNy4wLjAuMTo4MC0yMDIzLTA2LTA0IDE2OjQ5OjU0LjQ3ODY0Nw=='
+            # log_path = 'log/aHR0cDovLzEyNy4wLjAuMTo4MC0yMDIzLTA2LTA0IDE2OjQ5OjU0LjQ3ODY0Nw=='
+            log_path = result
             with open(log_path, 'r') as file:
                 self.res_data = file.readlines()
                 
@@ -194,4 +204,17 @@ class ScanDirTab(QWidget):
         else:
             self.textEdit.setText("None")
             
+    def on_setting(self):
+        set_win = ScanInputDialog('设置线程', f'请输入线程数(默认为1, 当前线程为{self.thread_n}):')
+        if set_win.exec():
+            thread_num = set_win.textValue()
+            try:
+                thread_num = int(thread_num)
+            except:
+                QMessageBox.warning(self, '错误', "输入非法")
+                return
             
+            if thread_num <= 0:
+                QMessageBox.warning(self, '错误',"输入范围错误")
+                return
+            self.thread_n = thread_num

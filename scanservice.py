@@ -51,6 +51,7 @@ def get_banner(ip, port):
             # 服务判断前先应该先调用端口存活验证
             break
         sock.close()
-if __name__ == "__main__":
-    print(get_banner("127.0.0.1","3306"))
+        
+# if __name__ == "__main__":
+#     print(get_banner("127.0.0.1","3306"))
 

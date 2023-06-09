@@ -12,6 +12,7 @@ class ScanOsTab(QWidget):
 
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
+        self.thread_n = 1
         
 
         # "IP: " + 输入框 + 四个复选框
@@ -36,7 +37,7 @@ class ScanOsTab(QWidget):
         
         self.scan_option = QComboBox()   
         self.scan_option.setFont(font_16B)
-        self.scan_option.addItem('TCP')
+        self.scan_option.addItem('TCP/IP')
         self.scan_option.addItem('ICMP')
         self.scan_option.currentIndexChanged.connect(self.on_update_option)
         self.h_layout1.addWidget(self.scan_option, 4)
@@ -104,6 +105,11 @@ class ScanOsTab(QWidget):
         self.line_system.addWidget(self.result_system)
         self.layout.addLayout(self.line_system)
         
+        # self.setting_button = QPushButton('线程设置')
+        # self.setting_button.setFont(font_16B)
+        # self.setting_button.clicked.connect(self.on_setting)
+        # self.layout.addWidget(self.setting_button)
+        
         self.layout.addStretch()
         
     
@@ -120,14 +126,14 @@ class ScanOsTab(QWidget):
         port = self.lineEdit_port.text()
         if(len(parse_ips(ip)) != 1):
             QMessageBox.critical(self, "错误", "ip地址格式错误")
-        elif (self.scan_option.currentText() == "TCP" and len(parse_ports(port)) != 1):
+        elif (self.scan_option.currentText() == "TCP/IP" and len(parse_ports(port)) != 1):
             QMessageBox.critical(self, "错误", "未输入端口号或者端口错误")
         else:
             # 重制输出
             self.result_protocal.clear()
             self.result_system.clear()
             
-            if self.scan_option.currentText() == "TCP":
+            if self.scan_option.currentText() == "TCP/IP":
                 resp = tcp_para_scan(ip, int(port))
             else:
                 resp = icmp_para_scan(ip)
@@ -138,10 +144,23 @@ class ScanOsTab(QWidget):
             self.result_system.setText(value)
      
     def on_update_option(self):
-        if self.scan_option.currentText() == "TCP":
+        if self.scan_option.currentText() == "TCP/IP":
             self.lineEdit_port.setEnabled(True)
         else:
             self.lineEdit_port.setEnabled(False)
         
-        
+    def on_setting(self):
+        set_win = ScanInputDialog('设置线程', f'请输入线程数(默认为1, 当前线程为{self.thread_n}):')
+        if set_win.exec():
+            thread_num = set_win.textValue()
+            try:
+                thread_num = int(thread_num)
+            except:
+                QMessageBox.warning(self, '错误', "输入非法")
+                return
+            
+            if thread_num <= 0:
+                QMessageBox.warning(self, '错误',"输入范围错误")
+                return
+            self.thread_n = thread_num
             

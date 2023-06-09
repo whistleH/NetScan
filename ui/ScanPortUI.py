@@ -29,6 +29,7 @@ class ScanPortTab(QWidget):
         super().__init__()
 
         self.inner_ports = {}
+        self.thread_n = 1
 
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
@@ -123,6 +124,11 @@ class ScanPortTab(QWidget):
         self.button_clear.setFont(font_16B)
         self.button_clear.clicked.connect(self.on_button_clear)
         self.right_layout.addWidget(self.button_clear)
+        
+        self.setting_button = QPushButton('线程设置')
+        self.setting_button.setFont(font_16B)
+        self.setting_button.clicked.connect(self.on_setting)
+        self.right_layout.addWidget(self.setting_button)
         
         self.right_layout.addStretch()
         
@@ -225,9 +231,23 @@ class ScanPortTab(QWidget):
         
             port_list = [int(value) for sublist in self.inner_ports.values() for value in sublist] 
             func_type = self.scan_option.currentText()
-            portscanner = PortScanner(ip, port_list, get_scan_func(func_type), thread_limit=1)
+            portscanner = PortScanner(ip, port_list, get_scan_func(func_type), thread_limit=self.thread_n)
             results = portscanner.start()
+            results = dict(sorted(results.items()))
             for res in results:
                 self.addRow({res: results[res]})
         
+    def on_setting(self):
+        set_win = ScanInputDialog('设置线程', f'请输入线程数(默认为1, 当前线程为{self.thread_n}):')
+        if set_win.exec():
+            thread_num = set_win.textValue()
+            try:
+                thread_num = int(thread_num)
+            except:
+                QMessageBox.warning(self, '错误', "输入非法")
+                return
             
+            if thread_num <= 0:
+                QMessageBox.warning(self, '错误',"输入范围错误")
+                return
+            self.thread_n = thread_num

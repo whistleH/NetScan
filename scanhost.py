@@ -37,6 +37,7 @@ class HostScanner():
     # 多线程运行
     def sacnner_helper(self):
         ip_index = 0
+        print(self._thread_limit)
         while ip_index < len(self._ips):
             while threading.activeCount() <= self._thread_limit and ip_index < len(self._ips):
                 thread = threading.Thread(target=self.scanner,
@@ -52,6 +53,8 @@ class HostScanner():
             args_set = [[ip_index, self._ips[ip_index], self._iface, self._src_mac] for ip_index in range(len(self._ips))]
             scan_res = [executor.submit(lambda p: self.scanner(*p),args) for args in args_set]
             [f.result() for f in scan_res]
+
+            print(self._scan_res)
         return self._scan_res
         
 
@@ -65,7 +68,7 @@ def icmp_scan(ip):
 
     icmp_packet = IP(dst=ip,ttl=128,id=ip_id)/ICMP(id=icmp_id,seq=icmp_seq)/b'test_data'
     
-    result = sr1(icmp_packet, timeout=2, verbose=False)
+    result = sr1(icmp_packet, timeout=1, verbose=False)
     if result:
         return True
     else:
@@ -154,10 +157,10 @@ def get_scan_func(func_name):
         return None
 
 # demo
-if __name__ == "__main__":
-    ips = ["127.0.0.1"]
-    hostscannner = HostScanner(ips,icmp_scan,thread_limit=5)
-    res = hostscannner.start()
-    print(res)
+# if __name__ == "__main__":
+#     ips = ["127.0.0.1"]
+#     hostscannner = HostScanner(ips,icmp_scan,thread_limit=5)
+#     res = hostscannner.start()
+#     print(res)
 
 # 输出格式：{ip: T/F}

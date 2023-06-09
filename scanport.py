@@ -110,12 +110,12 @@ def get_scan_func(func_name):
         return null_scan
 
     
-if __name__ == "__main__":
-    ip = "192.168.142.12"
-    ports = [22, 80, 443, 1025, 3389]
-    portscanner = PortScanner(ip, ports, syn_scan, thread_limit=1)
-    res = portscanner.start()
-    print(res)
+# if __name__ == "__main__":
+#     ip = "192.168.142.12"
+#     ports = [22, 80, 443, 1025, 3389]
+#     portscanner = PortScanner(ip, ports, syn_scan, thread_limit=1)
+#     res = portscanner.start()
+#     print(res)
 
 
 # 输出格式：index:(port, status, service)

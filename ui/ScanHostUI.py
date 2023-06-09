@@ -44,6 +44,7 @@ def parse_ips(ip_string):
 class ScanInputDialog(QDialog):
     def __init__(self, title, desp ,parent=None):
         super(ScanInputDialog, self).__init__(parent)
+        self.thread_n = 1
         
         self.setWindowTitle(title)
 
@@ -75,7 +76,7 @@ class ScanHostTab(QWidget):
 
         ''' 变量部分 '''
         self.ips_inner = {}   # 存放所有ip实际数据
-         
+        self.thread_n = 1
         
         ''' 组件部分 '''
         # Set layout
@@ -137,6 +138,13 @@ class ScanHostTab(QWidget):
         self.button_start_clear.clicked.connect(self.clear_ip)
         self.middle_layout.addWidget(self.button_start_clear)
         
+        self.setting_button = QPushButton('线程设置')
+        self.setting_button.setFont(font_16B)
+        self.setting_button.clicked.connect(self.on_setting)
+        self.middle_layout.addWidget(self.setting_button)
+        
+        
+        
         self.middle_layout.addStretch()
         
 
@@ -174,7 +182,7 @@ class ScanHostTab(QWidget):
     def delete_ip(self):
         del_win = ScanInputDialog('删除IP', '请输入要删除的IP:')
         if del_win.exec():
-            ip  = del_win.textValue()
+            ip = del_win.textValue()
             if ip:
                 current_text = self.text_edit_ips.toPlainText()
                 if ip in current_text.split('\n'):
@@ -192,8 +200,9 @@ class ScanHostTab(QWidget):
         select_func = get_scan_func(selected_option)
         ip_list = [value for sublist in self.ips_inner.values() for value in sublist] 
         
-        hostscannner = HostScanner(ip_list,select_func,thread_limit=1)
+        hostscannner = HostScanner(ip_list,select_func,thread_limit=self.thread_n)
         res = hostscannner.start()
+        res = dict(sorted(res.items()))
         for r in res.values():
             status = "up" if r[1] else "down"
             self.text_edit_scan_result.append(f'{r[0]} -> {status}')
@@ -206,3 +215,18 @@ class ScanHostTab(QWidget):
         self.ips_inner = {}
         self.text_edit_scan_result.clear()
     
+    def on_setting(self):
+        set_win = ScanInputDialog('设置线程', f'请输入线程数(默认为1, 当前线程为{self.thread_n}):')
+        if set_win.exec():
+            thread_num = set_win.textValue()
+            try:
+                thread_num = int(thread_num)
+            except:
+                QMessageBox.warning(self, '错误', "输入非法")
+                return
+            
+            if thread_num <= 0:
+                QMessageBox.warning(self, '错误',"输入范围错误")
+                return
+            self.thread_n = thread_num
+            

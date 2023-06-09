@@ -27,11 +27,14 @@ def tcp_para_scan(ip, dport):
         ttl = resp[IP].ttl
         df = int(format(resp[IP].flags.value, "03b")[1])
         os_set = get_os_from_icmp(ttl, df)
-
-        win_size = resp[TCP].window
-        mss = dict(resp[TCP].options)["MSS"]
-        os_set = os_set & get_os_from_tcp(win_size,mss)
-        return {"TCP":', '.join(os_set)}
+        
+        try:
+            win_size = resp[TCP].window
+            mss = dict(resp[TCP].options)["MSS"]
+            os_set = os_set & get_os_from_tcp(win_size,mss)
+            return {"TCP":', '.join(os_set)}
+        except:
+            return {"TCP":"主机端口无法进行TCP探测"}
     else:
         return {"TCP":"主机端口无法进行TCP探测"}
     
