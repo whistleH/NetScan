@@ -163,4 +163,4 @@ cython_debug/
 tempCodeRunnerFile.py
 
 # log
-log/*
+/log/*
