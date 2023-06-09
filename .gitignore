@@ -164,3 +164,6 @@ tempCodeRunnerFile.py
 
 # log
 log/*.log
+
+# dist
+dist.zip
